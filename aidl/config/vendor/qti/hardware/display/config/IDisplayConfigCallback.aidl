@@ -31,6 +31,8 @@ package vendor.qti.hardware.display.config;
 
 import android.hardware.common.NativeHandle;
 import vendor.qti.hardware.display.config.CameraSmoothOp;
+import vendor.qti.hardware.display.config.Attributes;
+import vendor.qti.hardware.display.config.Concurrency;
 
 @VintfStability
 interface IDisplayConfigCallback {
@@ -66,4 +68,20 @@ interface IDisplayConfigCallback {
      * @param fps camera frame rate
      */
     oneway void notifyCameraSmoothInfo(in CameraSmoothOp op, in int fps);
+
+    /*
+     * Send notification when display resolution is changed by composer.
+     *
+     * @param displayId the display on which resolution switch is done
+     * @param attr Attributes of the new display resolution
+     */
+    oneway void notifyResolutionChange(in int displayId, in Attributes attr);
+     /*
+      * Send mitigated fps when new display concurrency added like primary + wfd
+      * @param displayId the display on which resolution switch is done
+      * @param attr Attributes of the new display resolution
+      * @param concurrency Concurrency for display
+      */
+      oneway void notifyFpsMitigation(in int displayId, in Attributes attr, in Concurrency
+                                      concurrency);
 }

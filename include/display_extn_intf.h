@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,8 +36,14 @@
 
 #define EARLY_WAKEUP_FEATURE 1
 #define DYNAMIC_EARLY_WAKEUP_CONFIG 1
+#define PASS_COMPOSITOR_TID 1
+#define SMART_DISPLAY_CONFIG 1
+#define FPS_MITIGATION_ENABLED 1
+#define UNIFIED_DRAW_EXT 1
 
 namespace composer {
+
+using FpsMitigationCallback = std::function<void(float)>;
 
 struct LayerFlags {
   bool secure_camera = false;
@@ -67,6 +73,12 @@ struct FBTSlotInfo {
   bool predicted = false;
 };
 
+enum PerfHintType {
+  kNone = 0,
+  kSurfaceFlinger,
+  kRenderEngine,
+};
+
 class DisplayExtnIntf {
  public:
   virtual int SetContentFps(uint32_t fps) = 0;
@@ -81,6 +93,11 @@ class DisplayExtnIntf {
                         const FBTLayerInfo fbt_info, const FBTSlotInfo &fbt_current,
                         FBTSlotInfo &fbt_future) = 0;
   virtual int EndDraw(uint32_t display_id, const FBTSlotInfo &fbt_current) = 0;
+  virtual int SendCompositorTid(PerfHintType type, int tid) = 0;
+  virtual bool IsSmartDisplayConfig(uint32_t display_id) = 0;
+  virtual void SetFpsMitigationCallback(const FpsMitigationCallback callback,
+                                        std::vector<float> fps_list) = 0;
+  virtual void EndUnifiedDraw(uint32_t display_id) = 0;
 
  protected:
   virtual ~DisplayExtnIntf() { }
